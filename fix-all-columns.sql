@@ -1,14 +1,12 @@
--- Update match_sketches function with higher default limits
--- This will ensure we get 15 sketches instead of 4
+-- Fix all column name mismatches in match_sketches function
+-- Correct column names: meaning_level, visibility_level, chaos_order_level
 
--- Drop existing function
 DROP FUNCTION IF EXISTS match_sketches(vector(1536), float, int);
 
--- Recreate with correct parameters and higher default limit
 CREATE OR REPLACE FUNCTION match_sketches (
   query_embedding vector(1536),
-  match_threshold float DEFAULT 0.1,
-  match_count int DEFAULT 15
+  match_threshold float DEFAULT 0.01,
+  match_count int DEFAULT 20
 )
 RETURNS TABLE (
   id text,
@@ -23,9 +21,9 @@ RETURNS TABLE (
   tags text[],
   style text,
   complexity text,
-  meaning text,
-  visibility text,
-  chaos_order text,
+  meaning_level text,        -- FIXED: was meaning
+  visibility_level text,     -- FIXED: was visibility
+  chaos_order_level text,    -- FIXED: was chaos_order
   visual_description text,
   similarity float
 )
@@ -46,9 +44,9 @@ BEGIN
     sketches.tags,
     sketches.style,
     sketches.complexity,
-    sketches.meaning,
-    sketches.visibility,
-    sketches.chaos_order,
+    sketches.meaning_level,        -- FIXED: was meaning
+    sketches.visibility_level,     -- FIXED: was visibility
+    sketches.chaos_order_level,    -- FIXED: was chaos_order
     sketches.visual_description,
     1 - (sketches.embedding <=> query_embedding) as similarity
   FROM sketches
@@ -57,18 +55,3 @@ BEGIN
   LIMIT match_count;
 END;
 $$;
-
--- Verify the function was created with correct defaults
-SELECT 
-  routine_name,
-  parameter_name,
-  data_type,
-  parameter_default
-FROM information_schema.parameters
-WHERE specific_name IN (
-  SELECT specific_name 
-  FROM information_schema.routines 
-  WHERE routine_name = 'match_sketches' 
-    AND routine_schema = 'public'
-)
-ORDER BY ordinal_position;

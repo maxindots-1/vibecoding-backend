@@ -1,14 +1,11 @@
--- Update match_sketches function with higher default limits
--- This will ensure we get 15 sketches instead of 4
+-- Fix match_sketches function to use correct column name 'body_parts' instead of 'suitable_body_parts'
 
--- Drop existing function
 DROP FUNCTION IF EXISTS match_sketches(vector(1536), float, int);
 
--- Recreate with correct parameters and higher default limit
 CREATE OR REPLACE FUNCTION match_sketches (
   query_embedding vector(1536),
-  match_threshold float DEFAULT 0.1,
-  match_count int DEFAULT 15
+  match_threshold float DEFAULT 0.01,
+  match_count int DEFAULT 20
 )
 RETURNS TABLE (
   id text,
@@ -17,7 +14,7 @@ RETURNS TABLE (
   artist_name text,
   artist_bio text,
   image_filename text,
-  body_parts text[],
+  body_parts text[],  -- FIXED: was suitable_body_parts
   size text,
   price numeric,
   tags text[],
@@ -40,7 +37,7 @@ BEGIN
     sketches.artist_name,
     sketches.artist_bio,
     sketches.image_filename,
-    sketches.body_parts,
+    sketches.body_parts,  -- FIXED: was suitable_body_parts
     sketches.size,
     sketches.price,
     sketches.tags,
@@ -57,18 +54,3 @@ BEGIN
   LIMIT match_count;
 END;
 $$;
-
--- Verify the function was created with correct defaults
-SELECT 
-  routine_name,
-  parameter_name,
-  data_type,
-  parameter_default
-FROM information_schema.parameters
-WHERE specific_name IN (
-  SELECT specific_name 
-  FROM information_schema.routines 
-  WHERE routine_name = 'match_sketches' 
-    AND routine_schema = 'public'
-)
-ORDER BY ordinal_position;

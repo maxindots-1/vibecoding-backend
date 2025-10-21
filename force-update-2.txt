@@ -1,0 +1,3 @@
+Force update for Vercel deployment - fixed match_threshold parameter
+Timestamp: 2025-01-21 12:15:00
+Purpose: Force Vercel to redeploy with corrected match_threshold parameter
