@@ -90,10 +90,14 @@ export async function POST(request) {
       is_authenticated: false
     };
     
-    // Don't wait for session creation - do it in background
-    createUserSession(sessionId, sessionData).catch(error => {
-      console.error('Background session creation failed:', error);
-    });
+    // Wait for session creation to complete
+    try {
+      await createUserSession(sessionId, sessionData);
+      console.log('Session created successfully:', sessionId);
+    } catch (error) {
+      console.error('Session creation failed:', error);
+      // Continue anyway - session creation is not critical for search results
+    }
 
     // Return matched sketches with session ID
     const response = {

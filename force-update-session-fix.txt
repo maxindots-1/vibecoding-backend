@@ -1,0 +1,2 @@
+Force redeploy - Fixed session creation race condition
+Session now created BEFORE returning session_id to frontend
