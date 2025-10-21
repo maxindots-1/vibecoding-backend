@@ -131,7 +131,7 @@ async function generateMissingFields(sketchData, imageUrl) {
 Title: ${sketchData.title}
 Artist: ${sketchData.artist_name}
 Description: ${sketchData.description}
-Body Parts: ${sketchData.body_parts.join(', ')}
+Body Parts: ${sketchData.suitable_body_parts.join(', ')}
 Size: ${sketchData.size.join(', ')}
 Price: $${sketchData.price}
 
@@ -226,7 +226,7 @@ async function saveSketchToDatabase(sketchData, imageFilename, visualDescription
       artist_name: sketchData.artist_name,
       artist_bio: sketchData.artist_bio,
       description: sketchData.description,
-      body_parts: sketchData.body_parts,
+      suitable_body_parts: sketchData.suitable_body_parts,
       size: sketchData.size,
       price: sketchData.price,
       image_filename: imageFilename,
@@ -319,7 +319,7 @@ export async function POST(request) {
     const finalSketchData = {
       ...sketchData,
       ...generatedFields,
-      body_parts: Array.isArray(sketchData.body_parts) ? sketchData.body_parts : [sketchData.body_parts],
+      suitable_body_parts: Array.isArray(sketchData.suitable_body_parts) ? sketchData.suitable_body_parts : [sketchData.suitable_body_parts],
       size: sketchData.size, // Keep as single TEXT value
       tags: Array.isArray(generatedFields.tags) ? generatedFields.tags : (generatedFields.tags ? generatedFields.tags.split(',').map(tag => tag.trim()) : [])
     };
