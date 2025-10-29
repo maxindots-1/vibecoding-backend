@@ -64,7 +64,7 @@ export async function POST(request) {
 
 export async function GET(request) {
   try {
-    console.log('🔍 Get reactions API called');
+    console.log('🔍 Get reactions API called - V2');
     const { searchParams } = new URL(request.url);
     const session_id = searchParams.get('session_id');
 
@@ -79,7 +79,8 @@ export async function GET(request) {
 
     return Response.json({
       success: true,
-      reactions
+      reactions,
+      message: 'Reactions API is working!'
     });
 
   } catch (error) {
