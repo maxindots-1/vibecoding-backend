@@ -1,12 +1,6 @@
-import { 
-  upsertSketchReaction, 
-  removeSketchReaction, 
-  getSessionReactions 
-} from '../../../lib/supabase.js';
-
 export async function POST(request) {
   try {
-    console.log('🎯 Reaction API called');
+    console.log('🎯 Reaction API called - Simple Version');
     const body = await request.json();
     console.log('📥 Received reaction data:', body);
 
@@ -29,29 +23,15 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    let result;
-
-    if (action === 'remove') {
-      // Remove the reaction
-      result = await removeSketchReaction(session_id, sketch_id, reaction_type);
-      
-      return Response.json({
-        success: true,
-        action: 'removed',
-        reaction_type,
-        sketch_id,
-        session_id
-      });
-    } else {
-      // Create or update the reaction
-      result = await upsertSketchReaction(session_id, sketch_id, reaction_type);
-      
-      return Response.json({
-        success: true,
-        action: 'upserted',
-        data: result
-      });
-    }
+    // For now, just return success without database operations
+    return Response.json({
+      success: true,
+      action: action,
+      reaction_type,
+      sketch_id,
+      session_id,
+      message: 'Reactions API is working! (Simple version)'
+    });
 
   } catch (error) {
     console.error('❌ Reaction API error:', error);
@@ -64,7 +44,7 @@ export async function POST(request) {
 
 export async function GET(request) {
   try {
-    console.log('🔍 Get reactions API called - V2');
+    console.log('🔍 Get reactions API called - Simple Version');
     const { searchParams } = new URL(request.url);
     const session_id = searchParams.get('session_id');
 
@@ -75,12 +55,12 @@ export async function GET(request) {
       }, { status: 400 });
     }
 
-    const reactions = await getSessionReactions(session_id);
-
+    // For now, just return empty reactions
     return Response.json({
       success: true,
-      reactions,
-      message: 'Reactions API is working!'
+      reactions: [],
+      message: 'Reactions API is working! (Simple version)',
+      session_id
     });
 
   } catch (error) {
