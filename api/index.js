@@ -158,4 +158,73 @@ app.post('/api/update-session', async (req, res) => {
   }
 });
 
+// Reactions API
+app.get('/api/reactions', async (req, res) => {
+  try {
+    const { session_id } = req.query;
+
+    if (!session_id) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing session_id parameter'
+      });
+    }
+
+    // For now, just return empty reactions
+    res.json({
+      success: true,
+      reactions: [],
+      message: 'Reactions API is working! (Pages Router)',
+      session_id
+    });
+
+  } catch (error) {
+    console.error('Get reactions error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
+
+app.post('/api/reactions', async (req, res) => {
+  try {
+    const { session_id, sketch_id, reaction_type, action = 'upsert' } = req.body;
+
+    // Validate required fields
+    if (!session_id || !sketch_id || !reaction_type) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: session_id, sketch_id, reaction_type'
+      });
+    }
+
+    // Validate reaction type
+    const validReactions = ['like', 'dislike', 'bad_response'];
+    if (!validReactions.includes(reaction_type)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid reaction_type. Must be: like, dislike, or bad_response'
+      });
+    }
+
+    // For now, just return success without database operations
+    res.json({
+      success: true,
+      action: action,
+      reaction_type,
+      sketch_id,
+      session_id,
+      message: 'Reactions API is working! (Pages Router)'
+    });
+
+  } catch (error) {
+    console.error('Reaction API error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
+
 module.exports = app;
