@@ -2,7 +2,29 @@
  * Health check endpoint
  * GET /api/health
  */
-export async function GET() {
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const reactions = searchParams.get('reactions');
+  const session_id = searchParams.get('session_id');
+
+  // If reactions parameter is present, return reactions data
+  if (reactions === 'true') {
+    if (!session_id) {
+      return Response.json({
+        success: false,
+        error: 'Missing session_id parameter'
+      }, { status: 400 });
+    }
+
+    return Response.json({
+      success: true,
+      reactions: [],
+      message: 'Reactions API is working! (via health endpoint)',
+      session_id
+    });
+  }
+
+  // Otherwise return health check
   return Response.json({ 
     status: 'ok',
     timestamp: new Date().toISOString(),
