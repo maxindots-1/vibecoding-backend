@@ -6,7 +6,8 @@ export async function GET() {
   return Response.json({ 
     status: 'ok',
     timestamp: new Date().toISOString(),
-    service: 'Vibecoding Backend API'
+    service: 'Vibecoding Backend API',
+    version: '2.0'
   });
 }
 
