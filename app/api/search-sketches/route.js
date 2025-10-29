@@ -19,23 +19,53 @@ import { randomUUID } from 'crypto';
  *   moodboardDescription: string
  * }
  */
-// Temporary reactions endpoint
+/**
+ * Temporary reactions endpoint (GET)
+ * GET /api/search-sketches?session_id=xxx
+ */
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const session_id = searchParams.get('session_id');
 
-  if (!session_id) {
-    return Response.json({
-      success: false,
-      error: 'Missing session_id parameter'
-    }, { status: 400 });
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { 
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
   }
 
+  // If session_id is provided, return reactions (temporary endpoint)
+  if (session_id) {
+    return Response.json({
+      success: true,
+      reactions: {},
+      message: 'Reactions API is working! (temporary)',
+      session_id
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
+  }
+
+  // If no session_id, return error
   return Response.json({
-    success: true,
-    reactions: [],
-    message: 'Reactions API is working! (temporary)',
-    session_id
+    success: false,
+    error: 'Missing session_id parameter'
+  }, { 
+    status: 400,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    }
   });
 }
 
@@ -53,7 +83,31 @@ export async function POST(request) {
   }
 
   try {
-    const userResponses = await request.json();
+    const requestBody = await request.json();
+    
+    // Check if this is a reaction submission request
+    if (requestBody.reaction_type && requestBody.sketch_id && requestBody.session_id) {
+      // Handle reaction submission
+      console.log('Reaction submission received:', requestBody);
+      
+      return Response.json({
+        success: true,
+        action: requestBody.action || 'upsert',
+        reaction_type: requestBody.reaction_type,
+        sketch_id: requestBody.sketch_id,
+        session_id: requestBody.session_id,
+        message: 'Reaction submitted successfully! (temporary)'
+      }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      });
+    }
+    
+    // Otherwise, handle as normal search-sketches request
+    const userResponses = requestBody;
     
     // Add logging to debug prompt generation
     console.log('User responses received:', JSON.stringify(userResponses, null, 2));
