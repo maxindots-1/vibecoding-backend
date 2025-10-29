@@ -1,12 +1,13 @@
 {
   "name": "vibecoding-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "AI-powered tattoo sketch matching backend",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "vercel-build": "next build",
     "upload-sketches": "node scripts/upload-all-sketches.js",
     "process-sketches": "node scripts/process-all-sketches.js",
     "upload-single": "node scripts/upload-single-sketch.js",
