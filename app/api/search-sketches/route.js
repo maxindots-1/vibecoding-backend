@@ -19,6 +19,26 @@ import { randomUUID } from 'crypto';
  *   moodboardDescription: string
  * }
  */
+// Temporary reactions endpoint
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const session_id = searchParams.get('session_id');
+
+  if (!session_id) {
+    return Response.json({
+      success: false,
+      error: 'Missing session_id parameter'
+    }, { status: 400 });
+  }
+
+  return Response.json({
+    success: true,
+    reactions: [],
+    message: 'Reactions API is working! (temporary)',
+    session_id
+  });
+}
+
 export async function POST(request) {
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
