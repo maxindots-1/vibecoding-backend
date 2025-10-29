@@ -21,6 +21,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Test endpoint
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'Test endpoint is working!',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Search sketches
 app.post('/api/search-sketches', async (req, res) => {
   try {
